@@ -32,6 +32,9 @@ type MakeConfig struct {
 	Key      string
 	Port     string
 	Password string
+	// Timeout is the maximum amount of time for the TCP connection to establish.
+	// A Timeout of zero means no timeout.
+	Timeout time.Duration
 }
 
 // returns ssh.Signer from user you running app home path + cutted key path.
@@ -76,8 +79,9 @@ func (ssh_conf *MakeConfig) connect() (*ssh.Session, error) {
 	}
 
 	config := &ssh.ClientConfig{
-		User: ssh_conf.User,
-		Auth: auths,
+		User:    ssh_conf.User,
+		Auth:    auths,
+		Timeout: ssh_conf.Timeout,
 	}
 
 	client, err := ssh.Dial("tcp", ssh_conf.Server+":"+ssh_conf.Port, config)
